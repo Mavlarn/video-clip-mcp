@@ -6,6 +6,8 @@ import {
   ClipOptions, 
   MergeOptions, 
   SplitOptions, 
+  ExtractAudioWavOptions,
+  ExtractVideoFirstFrameOptions,
   VideoInfo, 
   ProcessResult,
   BatchTask 
@@ -26,6 +28,9 @@ export interface MCPToolParams {
   getVideoInfo: {
     filePath: string;
   };
+
+  extract_audio_wav: ExtractAudioWavOptions;
+  extract_video_first_frame: ExtractVideoFirstFrameOptions;
   
   // 批量处理工具参数
   batchProcess: {
@@ -52,6 +57,8 @@ export interface MCPToolResults {
   mergeVideos: ProcessResult;
   splitVideo: ProcessResult;
   getVideoInfo: VideoInfo;
+  extract_audio_wav: ProcessResult;
+  extract_video_first_frame: ProcessResult;
   batchProcess: {
     taskIds: string[];
     message: string;

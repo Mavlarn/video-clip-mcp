@@ -8,6 +8,7 @@ yarn-error.log*
 dist/
 build/
 *.tsbuildinfo
+pnpm-lock.yaml
 
 # 环境变量
 .env

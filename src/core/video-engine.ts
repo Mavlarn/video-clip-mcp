@@ -15,6 +15,8 @@ import {
   ClipOptions,
   MergeOptions,
   SplitOptions,
+  ExtractAudioWavOptions,
+  ExtractVideoFirstFrameOptions,
   ProcessResult,
   ProcessProgress,
   TimeSegment,
@@ -283,6 +285,88 @@ export class VideoEngine {
         error: success ? errorMessage : (errorMessage || '所有分割任务都失败了')
       };
 
+    } catch (error) {
+      return {
+        success: false,
+        outputPaths: [],
+        duration: Date.now() - startTime,
+        error: error instanceof Error ? error.message : '未知错误'
+      };
+    }
+  }
+
+  public async extractAudioWav(options: ExtractAudioWavOptions): Promise<ProcessResult> {
+    const startTime = Date.now();
+    const taskId = uuidv4();
+
+    try {
+      await this.validateInputFile(options.inputPath);
+      await this.ensureOutputDir(options.outputPath);
+
+      return new Promise((resolve, reject) => {
+        const command = ffmpeg(options.inputPath);
+
+        command.noVideo();
+        command.audioCodec('pcm_s16le');
+        command.format('wav');
+
+        command.output(options.outputPath);
+
+        command.on('end', () => {
+          resolve({
+            success: true,
+            outputPaths: [options.outputPath],
+            duration: Date.now() - startTime
+          });
+        });
+
+        command.on('error', (err: any) => {
+          reject(new Error(`提取音频失败: ${err.message}`));
+        });
+
+        this.processingTasks.set(taskId, command);
+        command.run();
+      });
+    } catch (error) {
+      return {
+        success: false,
+        outputPaths: [],
+        duration: Date.now() - startTime,
+        error: error instanceof Error ? error.message : '未知错误'
+      };
+    }
+  }
+
+  public async extractVideoFirstFrame(options: ExtractVideoFirstFrameOptions): Promise<ProcessResult> {
+    const startTime = Date.now();
+    const taskId = uuidv4();
+
+    try {
+      await this.validateInputFile(options.inputPath);
+      await this.ensureOutputDir(options.outputPath);
+
+      return new Promise((resolve, reject) => {
+        const command = ffmpeg(options.inputPath);
+
+        command.noAudio();
+        command.outputOptions(['-frames:v', '1']);
+        command.output(options.outputPath);
+
+        command.on('end', () => {
+          resolve({
+            success: true,
+            outputPaths: [options.outputPath],
+            duration: Date.now() - startTime
+          });
+        });
+
+        command.on('error', (err: any) => {
+          reject(new Error(`提取第一帧失败: ${err.message}`));
+        });
+
+        this.processingTasks.set(taskId, command);
+        command.run();
+      });
     } catch (error) {
       return {
         success: false,

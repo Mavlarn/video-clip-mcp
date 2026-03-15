@@ -15,7 +15,9 @@
 - 🎯 **精准剪辑** - 支持毫秒级精度的视频片段裁剪
 - 🔗 **智能合并** - 多视频文件无缝拼接，自动适配格式差异
 - ✂️ **灵活分割** - 按时长、大小或段数智能分割视频
-- 📊 **信息获取** - 详细的视频元数据分析和格式检测
+- � **音频提取** - 从视频中提取音频并输出为 WAV
+- 🖼️ **首帧提取** - 提取视频第一帧并输出为图片文件
+- �📊 **信息获取** - 详细的视频元数据分析和格式检测
 - 🚀 **批量处理** - 高效的批量任务管理和并行处理
 - 🎨 **多格式支持** - 支持主流视频格式和编码标准
 - 📈 **任务监控** - 实时任务状态跟踪和进度管理
@@ -157,6 +159,24 @@ await splitVideo({
 });
 ```
 
+### 提取音频（WAV）
+
+```typescript
+await extract_audio_wav({
+  inputPath: "input.mp4",
+  outputPath: "output.wav"
+});
+```
+
+### 提取第一帧
+
+```typescript
+await extract_video_first_frame({
+  inputPath: "input.mp4",
+  outputPath: "first_frame.png"
+});
+```
+
 ### 批量处理
 
 ```typescript
@@ -283,6 +303,12 @@ interface TaskStatus {
 ```typescript
 // 获取视频信息
 getVideoInfo(filePath: string): Promise<VideoInfo>
+
+// 提取音频（WAV）
+extract_audio_wav(options: { inputPath: string; outputPath: string }): Promise<string>
+
+// 提取第一帧
+extract_video_first_frame(options: { inputPath: string; outputPath: string }): Promise<string>
 
 // 剪辑视频
 clipVideo(options: VideoClipOptions): Promise<string>
@@ -435,7 +461,3 @@ npm run dev
 让我们一起打造更好的视频处理工具！🚀
 
 ---
-
-## 📞 联系方式
-
-**微信**: pickstar_loveXX

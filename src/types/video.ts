@@ -101,6 +101,16 @@ export interface SplitOptions {
   namePattern?: string;     // 文件命名模式
 }
 
+export interface ExtractAudioWavOptions {
+  inputPath: string;
+  outputPath: string;
+}
+
+export interface ExtractVideoFirstFrameOptions {
+  inputPath: string;
+  outputPath: string;
+}
+
 // 处理进度接口
 export interface ProcessProgress {
   percent: number;          // 完成百分比

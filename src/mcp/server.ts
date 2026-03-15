@@ -74,6 +74,12 @@ export class VideoClipMCPServer {
           
           case 'getVideoInfo':
             return await this.handleGetVideoInfo(args as unknown as MCPToolParams['getVideoInfo']);
+
+          case 'extract_audio_wav':
+            return await this.handleExtractAudioWav(args as unknown as MCPToolParams['extract_audio_wav']);
+
+          case 'extract_video_first_frame':
+            return await this.handleExtractVideoFirstFrame(args as unknown as MCPToolParams['extract_video_first_frame']);
           
           case 'batchProcess':
             return await this.handleBatchProcess(args as unknown as MCPToolParams['batchProcess']);
@@ -272,6 +278,42 @@ export class VideoClipMCPServer {
         }
       },
       {
+        name: 'extract_audio_wav',
+        description: '提取视频中的音频并输出为WAV文件',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            inputPath: {
+              type: 'string',
+              description: '输入视频文件路径'
+            },
+            outputPath: {
+              type: 'string',
+              description: '输出WAV文件路径'
+            }
+          },
+          required: ['inputPath', 'outputPath']
+        }
+      },
+      {
+        name: 'extract_video_first_frame',
+        description: '提取视频的第一帧画面并输出为图片文件',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            inputPath: {
+              type: 'string',
+              description: '输入视频文件路径'
+            },
+            outputPath: {
+              type: 'string',
+              description: '输出图片文件路径（例如 .png / .jpg）'
+            }
+          },
+          required: ['inputPath', 'outputPath']
+        }
+      },
+      {
         name: 'batchProcess',
         description: '批量处理视频任务',
         inputSchema: {
@@ -379,6 +421,30 @@ export class VideoClipMCPServer {
 
   private async handleGetVideoInfo(args: MCPToolParams['getVideoInfo']) {
     const result = await this.videoEngine.getVideoInfo(args.filePath);
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+
+  private async handleExtractAudioWav(args: MCPToolParams['extract_audio_wav']) {
+    const result = await this.videoEngine.extractAudioWav(args);
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+
+  private async handleExtractVideoFirstFrame(args: MCPToolParams['extract_video_first_frame']) {
+    const result = await this.videoEngine.extractVideoFirstFrame(args);
     return {
       content: [
         {

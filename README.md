@@ -1,6 +1,6 @@
 # 🎬 Video Clip MCP
 
-[![npm version](https://badge.fury.io/js/@pickstar-2002%2Fvideo-clip-mcp.svg)](https://badge.fury.io/js/@pickstar-2002%2Fvideo-clip-mcp)
+[![npm version](https://badge.fury.io/js/@mavlarn%2Fvideo-clip-mcp.svg)](https://badge.fury.io/js/@mavlarn%2Fvideo-clip-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3.3-blue.svg)](https://www.typescriptlang.org/)
@@ -28,13 +28,13 @@
 ### 全局安装（推荐）
 
 ```bash
-npm install -g @pickstar-2002/video-clip-mcp@latest
+npm install -g @mavlarn/video-clip-mcp@latest
 ```
 
 ### 临时使用
 
 ```bash
-npx @pickstar-2002/video-clip-mcp@latest
+npx @mavlarn/video-clip-mcp@latest
 ```
 
 ## 🔧 MCP 服务器配置
@@ -48,7 +48,7 @@ npx @pickstar-2002/video-clip-mcp@latest
   "mcpServers": {
     "video-clip": {
       "command": "npx",
-      "args": ["@pickstar-2002/video-clip-mcp@latest"]
+      "args": ["@mavlarn/video-clip-mcp@latest"]
     }
   }
 }
@@ -63,7 +63,7 @@ npx @pickstar-2002/video-clip-mcp@latest
   "mcp": {
     "servers": {
       "video-clip": {
-        "command": "npx @pickstar-2002/video-clip-mcp@latest"
+        "command": "npx @mavlarn/video-clip-mcp@latest"
       }
     }
   }
@@ -79,7 +79,7 @@ npx @pickstar-2002/video-clip-mcp@latest
   "mcpServers": {
     "video-clip": {
       "command": "npx",
-      "args": ["@pickstar-2002/video-clip-mcp@latest"],
+      "args": ["@mavlarn/video-clip-mcp@latest"],
       "env": {}
     }
   }
@@ -94,7 +94,7 @@ npx @pickstar-2002/video-clip-mcp@latest
 {
   "servers": {
     "video-clip": {
-      "command": "npx @pickstar-2002/video-clip-mcp@latest",
+      "command": "npx @mavlarn/video-clip-mcp@latest",
       "description": "🎬 视频剪辑处理工具"
     }
   }
@@ -110,7 +110,7 @@ npx @pickstar-2002/video-clip-mcp@latest
   "mcpServers": {
     "video-clip": {
       "command": "npx",
-      "args": ["@pickstar-2002/video-clip-mcp@latest"]
+      "args": ["@mavlarn/video-clip-mcp@latest"]
     }
   }
 }
@@ -344,12 +344,12 @@ getSupportedFormats(): Promise<SupportedFormats>
 
 **a. 首选方案 - 使用 @latest 标签**
 ```bash
-npx @pickstar-2002/video-clip-mcp@latest
+npx @mavlarn/video-clip-mcp@latest
 ```
 
 **b. 备用方案 - 锁定特定版本**
 ```bash
-npx @pickstar-2002/video-clip-mcp@1.2.0
+npx @mavlarn/video-clip-mcp@1.2.0
 ```
 
 **c. 终极方案 - 清理 npx 缓存**
@@ -406,7 +406,7 @@ rm -rf ~/.npm/_npx
 如果以上解决方案无法解决您的问题，请：
 
 1. 📋 收集错误信息和系统环境
-2. 🐛 在 [GitHub Issues](https://github.com/pickstar-2002/video-clip-mcp/issues) 提交问题
+2. 🐛 在 [GitHub Issues](https://github.com/mavlarn/video-clip-mcp/issues) 提交问题
 3. 💬 联系开发者（见下方联系方式）
 
 ## 🤝 贡献指南
@@ -423,7 +423,7 @@ rm -rf ~/.npm/_npx
 
 ```bash
 # 克隆仓库
-git clone https://github.com/pickstar-2002/video-clip-mcp.git
+git clone https://github.com/mavlarn/video-clip-mcp.git
 cd video-clip-mcp
 
 # 安装依赖

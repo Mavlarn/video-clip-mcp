@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   BatchTask,
   ClipOptions,
-  MergeOptions,
   SplitOptions,
+  ConcatClipsOptions,
   ProcessResult,
   ProcessProgress
 } from '../types/video.js';
@@ -207,11 +207,11 @@ export class BatchManager extends EventEmitter {
         case 'clip':
           result = await videoEngine.clipVideo(task.options as ClipOptions);
           break;
-        case 'merge':
-          result = await videoEngine.mergeVideos(task.options as MergeOptions);
-          break;
         case 'split':
           result = await videoEngine.splitVideo(task.options as SplitOptions);
+          break;
+        case 'concat_clips':
+          result = await videoEngine.concatClips(task.options as ConcatClipsOptions);
           break;
         default:
           throw new Error(`未知任务类型: ${task.type}`);

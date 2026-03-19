@@ -13,7 +13,6 @@
 ## ✨ 核心功能
 
 - 🎯 **精准剪辑** - 支持毫秒级精度的视频片段裁剪
-- 🔗 **智能合并** - 多视频文件无缝拼接，自动适配格式差异
 - 🧩 **片段拼接** - 将多个视频片段按顺序拼接成一个视频
 - ✂️ **灵活分割** - 按时长、大小或段数智能分割视频
 - 🔊 **音频提取** - 从视频中提取音频并输出为 WAV
@@ -149,18 +148,6 @@ await concat_clips({
 });
 ```
 
-### 视频合并
-
-```typescript
-// 合并多个视频文件
-await mergeVideos({
-  inputPaths: ["video1.mp4", "video2.mp4", "video3.mp4"],
-  outputPath: "merged.mp4",
-  quality: "medium",
-  resolution: { width: 1920, height: 1080 }
-});
-```
-
 ### 视频分割
 
 ```typescript
@@ -270,16 +257,6 @@ interface VideoClipOptions {
   preserveMetadata?: boolean;
 }
 
-interface MergeVideosOptions {
-  inputPaths: string[];
-  outputPath: string;
-  quality?: string;
-  videoCodec?: string;
-  audioCodec?: string;
-  resolution?: { width: number; height: number };
-  fps?: number;
-}
-
 interface SplitVideoOptions {
   inputPath: string;
   outputDir: string;
@@ -330,9 +307,6 @@ concat_clips(options: { clips: { inputPath: string }[]; outputPath: string; qual
 
 // 剪辑视频
 clipVideo(options: VideoClipOptions): Promise<string>
-
-// 合并视频
-mergeVideos(options: MergeVideosOptions): Promise<string>
 
 // 分割视频
 splitVideo(options: SplitVideoOptions): Promise<string[]>

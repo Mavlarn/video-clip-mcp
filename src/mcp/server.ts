@@ -66,9 +66,6 @@ export class VideoClipMCPServer {
           case 'clipVideo':
             return await this.handleClipVideo(args as unknown as MCPToolParams['clipVideo']);
           
-          case 'mergeVideos':
-            return await this.handleMergeVideos(args as unknown as MCPToolParams['mergeVideos']);
-          
           case 'splitVideo':
             return await this.handleSplitVideo(args as unknown as MCPToolParams['splitVideo']);
           
@@ -164,52 +161,6 @@ export class VideoClipMCPServer {
             }
           },
           required: ['inputPath', 'outputPath', 'timeSegment']
-        }
-      },
-      {
-        name: 'mergeVideos',
-        description: '合并多个视频文件，支持不同格式和分辨率的智能适配',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            inputPaths: {
-              type: 'array',
-              items: { type: 'string' },
-              description: '输入视频文件路径数组'
-            },
-            outputPath: {
-              type: 'string',
-              description: '输出视频文件路径'
-            },
-            quality: {
-              type: 'string',
-              enum: Object.values(QualityPreset),
-              description: '视频质量预设'
-            },
-            videoCodec: {
-              type: 'string',
-              enum: Object.values(VideoCodec),
-              description: '视频编码格式'
-            },
-            audioCodec: {
-              type: 'string',
-              enum: Object.values(AudioCodec),
-              description: '音频编码格式'
-            },
-            resolution: {
-              type: 'object',
-              properties: {
-                width: { type: 'number' },
-                height: { type: 'number' }
-              },
-              description: '目标分辨率'
-            },
-            fps: {
-              type: 'number',
-              description: '目标帧率'
-            }
-          },
-          required: ['inputPaths', 'outputPath']
         }
       },
       {
@@ -376,7 +327,7 @@ export class VideoClipMCPServer {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['clip', 'merge', 'split'],
+                    enum: ['clip', 'split', 'concat_clips'],
                     description: '任务类型'
                   },
                   options: {
@@ -435,18 +386,6 @@ export class VideoClipMCPServer {
 
   private async handleClipVideo(args: MCPToolParams['clipVideo']) {
     const result = await this.videoEngine.clipVideo(args);
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
-  }
-
-  private async handleMergeVideos(args: MCPToolParams['mergeVideos']) {
-    const result = await this.videoEngine.mergeVideos(args);
     return {
       content: [
         {

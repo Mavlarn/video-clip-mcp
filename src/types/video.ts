@@ -73,20 +73,6 @@ export interface ClipOptions {
   preserveMetadata?: boolean; // 保留元数据
 }
 
-// 合并参数接口
-export interface MergeOptions {
-  inputPaths: string[];     // 输入文件路径数组
-  outputPath: string;       // 输出文件路径
-  quality?: QualityPreset;  // 质量预设
-  videoCodec?: VideoCodec;  // 视频编码
-  audioCodec?: AudioCodec;  // 音频编码
-  resolution?: {            // 目标分辨率
-    width: number;
-    height: number;
-  };
-  fps?: number;             // 目标帧率
-}
-
 // 分割参数接口
 export interface SplitOptions {
   inputPath: string;        // 输入文件路径
@@ -144,8 +130,8 @@ export interface ProcessResult {
 // 批量处理任务接口
 export interface BatchTask {
   id: string;               // 任务ID
-  type: 'clip' | 'merge' | 'split'; // 任务类型
-  options: ClipOptions | MergeOptions | SplitOptions; // 任务参数
+  type: 'clip' | 'split' | 'concat_clips'; // 任务类型
+  options: ClipOptions | SplitOptions | ConcatClipsOptions; // 任务参数
   status: 'pending' | 'processing' | 'completed' | 'failed'; // 任务状态
   progress?: ProcessProgress; // 处理进度
   result?: ProcessResult;   // 处理结果

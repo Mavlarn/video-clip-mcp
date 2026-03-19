@@ -4,7 +4,6 @@
 
 import { 
   ClipOptions, 
-  MergeOptions, 
   SplitOptions, 
   ExtractAudioWavOptions,
   ExtractVideoFirstFrameOptions,
@@ -18,9 +17,6 @@ import {
 export interface MCPToolParams {
   // 视频剪辑工具参数
   clipVideo: ClipOptions;
-  
-  // 视频合并工具参数
-  mergeVideos: MergeOptions;
   
   // 视频分割工具参数
   splitVideo: SplitOptions;
@@ -56,7 +52,6 @@ export interface MCPToolParams {
 // MCP工具返回值类型
 export interface MCPToolResults {
   clipVideo: ProcessResult;
-  mergeVideos: ProcessResult;
   splitVideo: ProcessResult;
   getVideoInfo: VideoInfo;
   extract_audio_wav: ProcessResult;

@@ -13,7 +13,6 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 import {
   VideoInfo,
   ClipOptions,
-  MergeOptions,
   SplitOptions,
   ExtractAudioWavOptions,
   ExtractVideoFirstFrameOptions,
@@ -119,89 +118,6 @@ export class VideoEngine {
 
         this.processingTasks.set(taskId, command);
         command.run();
-      });
-
-    } catch (error) {
-      return {
-        success: false,
-        outputPaths: [],
-        duration: Date.now() - startTime,
-        error: error instanceof Error ? error.message : '未知错误'
-      };
-    }
-  }
-
-  /**
-   * 视频合并
-   */
-  public async mergeVideos(options: MergeOptions): Promise<ProcessResult> {
-    const startTime = Date.now();
-    const taskId = uuidv4();
-
-    try {
-      // 验证所有输入文件
-      for (const inputPath of options.inputPaths) {
-        await this.validateInputFile(inputPath);
-      }
-
-      // 确保输出目录存在
-      await this.ensureOutputDir(options.outputPath);
-
-      return new Promise(async (resolve, reject) => {
-        try {
-          // 创建临时文件列表
-          const tempListPath = path.join(path.dirname(options.outputPath), `temp_list_${taskId}.txt`);
-          const fileList = options.inputPaths.map(p => `file '${path.resolve(p).replace(/\\/g, '/')}'`).join('\n');
-          await fs.writeFile(tempListPath, fileList, 'utf8');
-
-          const command = ffmpeg()
-            .input(tempListPath)
-            .inputOptions(['-f', 'concat', '-safe', '0'])
-            .output(options.outputPath);
-
-          // 设置编码参数 - 避免使用复杂滤镜
-          if (options.videoCodec || options.audioCodec) {
-            // 需要重新编码
-            command.outputOptions(['-c:v', options.videoCodec || 'libx264']);
-            command.outputOptions(['-c:a', options.audioCodec || 'aac']);
-            this.applyEncodingOptions(command, options);
-          } else {
-            // 使用流复制，更快更稳定
-            command.outputOptions(['-c', 'copy']);
-          }
-
-          command.on('end', async () => {
-            // 清理临时文件
-            try {
-              await fs.unlink(tempListPath);
-            } catch (e) {
-              console.warn('清理临时文件失败:', e);
-            }
-            
-            resolve({
-              success: true,
-              outputPaths: [options.outputPath],
-              duration: Date.now() - startTime
-            });
-          });
-
-          command.on('error', async (err: any) => {
-            // 清理临时文件
-            try {
-              await fs.unlink(tempListPath);
-            } catch (e) {
-              console.warn('清理临时文件失败:', e);
-            }
-            
-            reject(new Error(`视频合并失败: ${err.message}`));
-          });
-
-          this.processingTasks.set(taskId, command);
-          command.run();
-          
-        } catch (error) {
-          reject(error);
-        }
       });
 
     } catch (error) {
@@ -380,6 +296,7 @@ export class VideoEngine {
 
   public async concatClips(options: ConcatClipsOptions): Promise<ProcessResult> {
     const startTime = Date.now();
+    const taskId = uuidv4();
 
     try {
       if (!options.clips || options.clips.length === 0) {
@@ -391,18 +308,60 @@ export class VideoEngine {
         await this.validateInputFile(clip.inputPath);
       }
 
-      const mergeResult = await this.mergeVideos({
-        inputPaths: options.clips.map(c => c.inputPath),
-        outputPath: options.outputPath,
-        quality: options.quality,
-        videoCodec: options.videoCodec,
-        audioCodec: options.audioCodec
-      });
+      const tempListPath = path.join(path.dirname(options.outputPath), `temp_list_${taskId}.txt`);
+      const fileList = options.clips
+        .map(c => `file '${path.resolve(c.inputPath).replace(/\\/g, '/')}'`)
+        .join('\n');
+      await fs.writeFile(tempListPath, fileList, 'utf8');
 
-      return {
-        ...mergeResult,
-        duration: Date.now() - startTime
-      };
+      try {
+        return await new Promise<ProcessResult>((resolve) => {
+          const command = ffmpeg()
+            .input(tempListPath)
+            .inputOptions(['-f', 'concat', '-safe', '0'])
+            .output(options.outputPath);
+
+          const needsReencode = Boolean(options.videoCodec || options.audioCodec || options.quality);
+          if (needsReencode) {
+            command.outputOptions(['-c:v', options.videoCodec || 'libx264']);
+            command.outputOptions(['-c:a', options.audioCodec || 'aac']);
+            this.applyEncodingOptions(command, options);
+          } else {
+            command.outputOptions(['-c', 'copy']);
+          }
+
+          command.on('end', async () => {
+            try {
+              await fs.unlink(tempListPath);
+            } catch {}
+            resolve({
+              success: true,
+              outputPaths: [options.outputPath],
+              duration: Date.now() - startTime
+            });
+          });
+
+          command.on('error', async (err: any) => {
+            try {
+              await fs.unlink(tempListPath);
+            } catch {}
+            resolve({
+              success: false,
+              outputPaths: [],
+              duration: Date.now() - startTime,
+              error: `片段拼接失败: ${err.message}`
+            });
+          });
+
+          this.processingTasks.set(taskId, command);
+          command.run();
+        });
+      } catch (err) {
+        try {
+          await fs.unlink(tempListPath);
+        } catch {}
+        throw err;
+      }
     } catch (error) {
       return {
         success: false,

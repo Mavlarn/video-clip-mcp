@@ -80,6 +80,9 @@ export class VideoClipMCPServer {
 
           case 'extract_video_first_frame':
             return await this.handleExtractVideoFirstFrame(args as unknown as MCPToolParams['extract_video_first_frame']);
+
+          case 'concat_clips':
+            return await this.handleConcatClips(args as unknown as MCPToolParams['concat_clips']);
           
           case 'batchProcess':
             return await this.handleBatchProcess(args as unknown as MCPToolParams['batchProcess']);
@@ -314,6 +317,53 @@ export class VideoClipMCPServer {
         }
       },
       {
+        name: 'concat_clips',
+        description: '将多个视频片段按顺序拼接合并为一个视频文件',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            clips: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  inputPath: {
+                    type: 'string',
+                    description: '输入视频文件路径'
+                  }
+                },
+                required: ['inputPath']
+              },
+              description: '按顺序拼接的视频片段列表'
+            },
+            outputPath: {
+              type: 'string',
+              description: '输出视频文件路径'
+            },
+            quality: {
+              type: 'string',
+              enum: Object.values(QualityPreset),
+              description: '视频质量预设'
+            },
+            videoCodec: {
+              type: 'string',
+              enum: Object.values(VideoCodec),
+              description: '视频编码格式'
+            },
+            audioCodec: {
+              type: 'string',
+              enum: Object.values(AudioCodec),
+              description: '音频编码格式'
+            },
+            preserveMetadata: {
+              type: 'boolean',
+              description: '是否保留元数据'
+            }
+          },
+          required: ['clips', 'outputPath']
+        }
+      },
+      {
         name: 'batchProcess',
         description: '批量处理视频任务',
         inputSchema: {
@@ -445,6 +495,18 @@ export class VideoClipMCPServer {
 
   private async handleExtractVideoFirstFrame(args: MCPToolParams['extract_video_first_frame']) {
     const result = await this.videoEngine.extractVideoFirstFrame(args);
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
+  }
+
+  private async handleConcatClips(args: MCPToolParams['concat_clips']) {
+    const result = await this.videoEngine.concatClips(args);
     return {
       content: [
         {

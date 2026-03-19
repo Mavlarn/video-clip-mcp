@@ -14,10 +14,11 @@
 
 - 🎯 **精准剪辑** - 支持毫秒级精度的视频片段裁剪
 - 🔗 **智能合并** - 多视频文件无缝拼接，自动适配格式差异
+- 🧩 **片段拼接** - 将多个视频片段按顺序拼接成一个视频
 - ✂️ **灵活分割** - 按时长、大小或段数智能分割视频
-- � **音频提取** - 从视频中提取音频并输出为 WAV
+- 🔊 **音频提取** - 从视频中提取音频并输出为 WAV
 - 🖼️ **首帧提取** - 提取视频第一帧并输出为图片文件
-- �📊 **信息获取** - 详细的视频元数据分析和格式检测
+- 📊 **信息获取** - 详细的视频元数据分析和格式检测
 - 🚀 **批量处理** - 高效的批量任务管理和并行处理
 - 🎨 **多格式支持** - 支持主流视频格式和编码标准
 - 📈 **任务监控** - 实时任务状态跟踪和进度管理
@@ -129,6 +130,20 @@ await clipVideo({
     start: 10000,  // 10秒（毫秒）
     end: 30000     // 30秒（毫秒）
   },
+  quality: "fast",
+  videoCodec: "libx264"
+});
+```
+
+### 片段拼接
+
+```typescript
+await concat_clips({
+  clips: [
+    { inputPath: "clip_001.mp4" },
+    { inputPath: "clip_002.mp4" }
+  ],
+  outputPath: "concat.mp4",
   quality: "fast",
   videoCodec: "libx264"
 });
@@ -309,6 +324,9 @@ extract_audio_wav(options: { inputPath: string; outputPath: string }): Promise<s
 
 // 提取第一帧
 extract_video_first_frame(options: { inputPath: string; outputPath: string }): Promise<string>
+
+// 拼接片段
+concat_clips(options: { clips: { inputPath: string }[]; outputPath: string; quality?: string; videoCodec?: string; audioCodec?: string; preserveMetadata?: boolean }): Promise<string>
 
 // 剪辑视频
 clipVideo(options: VideoClipOptions): Promise<string>

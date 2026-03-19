@@ -111,6 +111,19 @@ export interface ExtractVideoFirstFrameOptions {
   outputPath: string;
 }
 
+export interface ConcatClip {
+  inputPath: string;
+}
+
+export interface ConcatClipsOptions {
+  clips: ConcatClip[];
+  outputPath: string;
+  quality?: QualityPreset;
+  videoCodec?: VideoCodec;
+  audioCodec?: AudioCodec;
+  preserveMetadata?: boolean;
+}
+
 // 处理进度接口
 export interface ProcessProgress {
   percent: number;          // 完成百分比

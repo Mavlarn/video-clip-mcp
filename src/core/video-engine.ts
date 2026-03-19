@@ -17,6 +17,7 @@ import {
   SplitOptions,
   ExtractAudioWavOptions,
   ExtractVideoFirstFrameOptions,
+  ConcatClipsOptions,
   ProcessResult,
   ProcessProgress,
   TimeSegment,
@@ -367,6 +368,41 @@ export class VideoEngine {
         this.processingTasks.set(taskId, command);
         command.run();
       });
+    } catch (error) {
+      return {
+        success: false,
+        outputPaths: [],
+        duration: Date.now() - startTime,
+        error: error instanceof Error ? error.message : '未知错误'
+      };
+    }
+  }
+
+  public async concatClips(options: ConcatClipsOptions): Promise<ProcessResult> {
+    const startTime = Date.now();
+
+    try {
+      if (!options.clips || options.clips.length === 0) {
+        throw new Error('clips 不能为空');
+      }
+
+      await this.ensureOutputDir(options.outputPath);
+      for (const clip of options.clips) {
+        await this.validateInputFile(clip.inputPath);
+      }
+
+      const mergeResult = await this.mergeVideos({
+        inputPaths: options.clips.map(c => c.inputPath),
+        outputPath: options.outputPath,
+        quality: options.quality,
+        videoCodec: options.videoCodec,
+        audioCodec: options.audioCodec
+      });
+
+      return {
+        ...mergeResult,
+        duration: Date.now() - startTime
+      };
     } catch (error) {
       return {
         success: false,

@@ -1,6 +1,6 @@
 {
   "name": "@mavlarn/video-clip-mcp",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "🎬 基于AI MCP协议的专业视频剪辑工具，支持精准剪辑、智能合并、灵活分割等功能",
   "main": "dist/index.js",
   "type": "module",

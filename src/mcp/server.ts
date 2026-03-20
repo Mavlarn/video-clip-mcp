@@ -165,7 +165,7 @@ export class VideoClipMCPServer {
       },
       {
         name: 'splitVideo',
-        description: '分割视频文件，支持按时长、大小或段数分割',
+        description: '分割视频文件，支持按时长、大小、段数或自定义时间片段分割',
         inputSchema: {
           type: 'object',
           properties: {
@@ -179,7 +179,7 @@ export class VideoClipMCPServer {
             },
             splitBy: {
               type: 'string',
-              enum: ['duration', 'size', 'segments'],
+              enum: ['duration', 'size', 'segments', 'timestamps'],
               description: '分割方式'
             },
             duration: {
@@ -193,6 +193,20 @@ export class VideoClipMCPServer {
             segmentCount: {
               type: 'number',
               description: '分割段数'
+            },
+            segments: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  timestamp: {
+                    type: 'string',
+                    description: '时间片段，格式如 0.0s~5.5s'
+                  }
+                },
+                required: ['timestamp']
+              },
+              description: '自定义时间片段数组（当 splitBy=timestamps 时使用）'
             },
             quality: {
               type: 'string',

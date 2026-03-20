@@ -77,10 +77,11 @@ export interface ClipOptions {
 export interface SplitOptions {
   inputPath: string;        // 输入文件路径
   outputDir: string;        // 输出目录
-  splitBy: 'duration' | 'size' | 'segments'; // 分割方式
+  splitBy: 'duration' | 'size' | 'segments' | 'timestamps'; // 分割方式
   duration?: number;        // 按时长分割（秒）
   maxSize?: number;         // 按大小分割（MB）
   segmentCount?: number;    // 分割段数
+  segments?: { timestamp: string }[];
   quality?: QualityPreset;  // 质量预设
   videoCodec?: VideoCodec;  // 视频编码
   audioCodec?: AudioCodec;  // 音频编码

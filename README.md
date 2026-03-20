@@ -161,6 +161,19 @@ await splitVideo({
 });
 ```
 
+```typescript
+// 按自定义时间片段分割视频
+await splitVideo({
+  inputPath: "long_video.mp4",
+  outputDir: "./segments",
+  splitBy: "timestamps",
+  segments: [
+    { timestamp: "0.0s~5.5s" },
+    { timestamp: "5.6s~10.4s" }
+  ]
+});
+```
+
 ### 提取音频（WAV）
 
 ```typescript
@@ -260,10 +273,11 @@ interface VideoClipOptions {
 interface SplitVideoOptions {
   inputPath: string;
   outputDir: string;
-  splitBy: 'duration' | 'size' | 'segments';
+  splitBy: 'duration' | 'size' | 'segments' | 'timestamps';
   duration?: number;     // 按时长分割（秒）
   maxSize?: number;      // 按大小分割（MB）
   segmentCount?: number; // 分割段数
+  segments?: { timestamp: string }[]; // 自定义时间片段，格式如 0.0s~5.5s
   namePattern?: string;  // 文件命名模式
 }
 

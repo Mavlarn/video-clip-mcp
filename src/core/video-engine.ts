@@ -475,6 +475,17 @@ export class VideoEngine {
         }
         break;
 
+      case 'timestamps':
+        if (!options.segments || options.segments.length === 0) throw new Error('缺少分割片段参数');
+        for (const seg of options.segments) {
+          const parsed = this.parseTimestampSegment(seg.timestamp);
+          segments.push({
+            start: parsed.start,
+            end: Math.min(parsed.end, totalDuration)
+          });
+        }
+        break;
+
       case 'size':
         if (!options.maxSize) throw new Error('缺少最大文件大小参数');
         // 基于比特率估算分割点
@@ -490,6 +501,20 @@ export class VideoEngine {
     }
 
     return segments;
+  }
+
+  private parseTimestampSegment(timestamp: string): { start: number; end: number } {
+    const trimmed = timestamp.trim();
+    const match = trimmed.match(/^([0-9]+(?:\.[0-9]+)?)s?\s*~\s*([0-9]+(?:\.[0-9]+)?)s?$/);
+    if (!match) {
+      throw new Error(`无效的timestamp格式: ${timestamp}`);
+    }
+    const startSec = Number(match[1]);
+    const endSec = Number(match[2]);
+    if (!Number.isFinite(startSec) || !Number.isFinite(endSec) || startSec < 0 || endSec <= startSec) {
+      throw new Error(`无效的timestamp范围: ${timestamp}`);
+    }
+    return { start: Math.round(startSec * 1000), end: Math.round(endSec * 1000) };
   }
 
   private generateSplitFileName(inputPath: string, index: number, pattern?: string): string {
